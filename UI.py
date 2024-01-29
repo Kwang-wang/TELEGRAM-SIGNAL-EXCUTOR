@@ -16,7 +16,7 @@ class GUI:
         self.frame2 = tk.Frame(padx=20)
         
         self.NotifiText = tk.Text(window, height=13, width=120)
-        self.NotifiText.insert(tk.END,"Welcome to MT5 Telegram signal executor\n")
+        self.NotifiText.insert(tk.END,"Welcome to MT5 Telegram signal executor\n(Code by QUangPam_BloodMoonApplication)\n")
         self.connect_button = tk.Button(window, text="Connect to MT5")
         self.shutdown_button = tk.Button(self.frame1, text="Disconnect to MT5")
         self.BotTokenEntry = tk.Entry(self.frame1, width=30)
@@ -39,7 +39,7 @@ class GUI:
         self.CloseLotPointEntry = tk.Entry(self.frame1,width=5)
         self.PercentLotCloseLabel = tk.Label(self.frame1,text="Percent Lot Close(%):")
         self.PercentLotClose = tk.Scale(self.frame1,from_=0,to=100,orient=tk.HORIZONTAL)
-        self.TrallingStopLabel = tk.Label(self.frame1,text="Trailling Stop :")
+        self.TrallingStopLabel = tk.Label(self.frame1,text="Trailling Stop(pip) :")
         self.TrallingStopEntry = tk.Entry(self.frame1,width=5)
         
         
