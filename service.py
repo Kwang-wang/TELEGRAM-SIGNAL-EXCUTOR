@@ -191,6 +191,25 @@ class OrderProcessHandler:
         result = mt5.order_send(request)
         return ("retcode :{} : {}".format(str(result.retcode),exception(result.retcode)))
     
+    def traillingStopFunc(self,position,traillingRange):
+        point = mt5.symbol_info(position.symbol).point
+        sl = None
+        price = None
+        if(position.type == mt5.ORDER_TYPE_BUY):
+            price = mt5.symbol_info_tick(position.symbol).ask
+            sl = float(price - 10*point*traillingRange)
+        if(position.type == mt5.ORDER_TYPE_SELL):
+            price = mt5.symbol_info_tick(position.symbol).bid
+            sl = float(price + 10*point * traillingRange)
+        request ={
+            "action" : mt5.TRADE_ACTION_SLTP,
+            "position" : position.ticket,
+            "symbol" : position.symbol,
+            'sl' : sl
+        }
+        result = mt5.order_send(request)
+        return ("retcode :{} : {}".format(str(result.retcode),exception(result.retcode)))
+    
     def checkPosition(self,positions):
         for position in positions:
             print("checking : order {}".format(position.ticket))
@@ -214,6 +233,10 @@ class OrderProcessHandler:
                 if (abs(float(position.price_current-position.price_open)) >= self.moveSLPoint * point * 10):
                     result = self.moveSLtoEntry(position)
                     ui.Notification("Move SL to Entry order : {} | Symbol : {} | Price Open : {} | CurrentPrice {}\n"
+                                    .format(position.ticket,position.symbol,position.price_open,position.price_current)+ result)
+            if self.traillingStop != None and (abs(float(position.price_current - position.price_open)) > self.traillingStop*10*point) and (abs(float(position.price_current - position.sl)) > self.traillingStop*10*point):
+                result = self.traillingStopFunc(position,self.traillingStop)
+                ui.Notification("traillingStopped order : {} | Symbol : {} | Price Open : {} | CurrentPrice {}\n"
                                     .format(position.ticket,position.symbol,position.price_open,position.price_current)+ result)
     def run(self):
         self.isrunning = True
